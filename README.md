@@ -21,6 +21,21 @@ For now, there is only the sysfs adapter, which uses linux sysfs exposed files/d
 To communicate with a periphal via SPI like an LCD controller, i've created a driveless solution for now using bitbanging.
 As i already noticed, the combination of sysfs + bitbanging is way too slow for descent drawing performance on a display (and i have just a 128x64 one).
 
+    <?php
+    use Lwc\Raspi\Gpio;
+    use Lwc\Raspi\Spi;
+    
+    $gpioAdapter = new Gpio\Adapter\SysfsAdapter();
+    $mosi = new Gpio\Pin(Gpio\Pin::PIN_MOSI, Pin::DIRECTION_OUTPUT, $gpioAdapter);
+    $sclk = new Gpio\Pin(Gpio\Pin::PIN_SCLK, Pin::DIRECTION_OUTPUT, $gpioAdapter);
+    $cs = new Gpio\Pin(Gpio\Pin::PIN_CS, Pin::DIRECTION_OUTPUT, $gpioAdapter);
+    $rs = new Gpio\Pin(Gpio\Pin::PIN_RS, Pin::DIRECTION_OUTPUT, $gpioAdapter);
+    
+    $spiAdapter = new Spi\Adapter\GpioBitbangingAdapter($mosi, $sclk, $cs, $rs);
+    
+    $spiAdapter->writeCommand(...);
+    $spiAdapter->writeData(...);
+    
 ========
 
 ## Future
